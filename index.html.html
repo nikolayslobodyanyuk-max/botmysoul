@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Знакомства</title>
+    
+    <!-- Подключаем Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .status {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: opacity 0.2s;
+        }
+        .btn:active {
+            opacity: 0.7;
+        }
+        .btn-primary {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        .btn-danger {
+            background: #ff3b30;
+            color: white;
+        }
+        .btn-success {
+            background: #34c759;
+            color: white;
+        }
+        .message-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--tg-theme-hint-color, #ccc);
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        .message-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #2481cc);
+        }
+        .chat-messages {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 12px;
+            padding: 15px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .message {
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            max-width: 80%;
+        }
+        .message.incoming {
+            background: var(--tg-theme-secondary-bg-color, #e9ecef);
+            align-self: flex-start;
+        }
+        .message.outgoing {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🤝 Знакомства</h1>
+    
+    <div id="status" class="status">
+        <span id="statusText">👋 Нажмите "Найти собеседника"</span>
+    </div>
+    
+    <!-- Кнопки -->
+    <button id="findBtn" class="btn btn-primary">🔍 Найти собеседника</button>
+    <button id="nextBtn" class="btn btn-success hidden">➡️ Следующий</button>
+    <button id="stopBtn" class="btn btn-danger hidden">❌ Закончить диалог</button>
+    
+    <!-- Чат -->
+    <div id="chatArea" class="hidden">
+        <div id="messages" class="chat-messages"></div>
+        <textarea id="msgInput" class="message-input" placeholder="Введите сообщение..." rows="2"></textarea>
+        <button id="sendBtn" class="btn btn-primary">📤 Отправить</button>
+    </div>
+</div>
+
+<script>
+    // Получаем объект Telegram WebApp
+    const tg = window.Telegram.WebApp;
+    
+    // Расширяем приложение на весь экран
+    tg.expand();
+    
+    // Получаем данные пользователя
+    const user = tg.initDataUnsafe?.user;
+    const userId = user?.id || 'unknown';
+    const userName = user?.first_name || 'Пользователь';
+    
+    // DOM элементы
+    const statusText = document.getElementById('statusText');
+    const findBtn = document.getElementById('findBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const chatArea = document.getElementById('chatArea');
+    const messages = document.getElementById('messages');
+    const msgInput = document.getElementById('msgInput');
+    const sendBtn = document.getElementById('sendBtn');
+    
+    // Состояние
+    let isInChat = false;
+    
+    // Отправка данных в бота
+    function sendToBot(action, data = {}) {
+        tg.sendData(JSON.stringify({
+            action: action,
+            userId: userId,
+            userName: userName,
+            ...data
+        }));
+    }
+    
+    // Обновление интерфейса
+    function updateUI(status, inChat) {
+        isInChat = inChat;
+        statusText.textContent = status;
+        
+        if (inChat) {
+            findBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            stopBtn.classList.remove('hidden');
+            chatArea.classList.remove('hidden');
+        } else {
+            findBtn.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            stopBtn.classList.add('hidden');
+            chatArea.classList.add('hidden');
+            messages.innerHTML = '';
+        }
+    }
+    
+    // Добавление сообщения в чат
+    function addMessage(text, isOutgoing) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${isOutgoing ? 'outgoing' : 'incoming'}`;
+        msgDiv.textContent = text;
+        messages.appendChild(msgDiv);
+        messages.scrollTop = messages.scrollHeight;
+    }
+    
+    // Обработчики кнопок
+    findBtn.addEventListener('click', () => {
+        sendToBot('find');
+        statusText.textContent = '🔍 Ищем собеседника...';
+        findBtn.disabled = true;
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        sendToBot('next');
+        statusText.textContent = '🔍 Ищем нового...';
+        messages.innerHTML = '';
+    });
+    
+    stopBtn.addEventListener('click', () => {
+        sendToBot('stop');
+        updateUI('👋 Диалог завершен', false);
+    });
+    
+    sendBtn.addEventListener('click', () => {
+        const text = msgInput.value.trim();
+        if (text && isInChat) {
+            sendToBot('message', { text: text });
+            addMessage(text, true);
+            msgInput.value = '';
+        }
+    });
+    
+    msgInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendBtn.click();
+        }
+    });
+    
+    // Обработка данных из бота
+    window.Telegram.WebApp.onEvent('message', (data) => {
+        try {
+            const parsed = JSON.parse(data);
+            
+            switch (parsed.action) {
+                case 'chat_started':
+                    updateUI('✅ Собеседник найден!', true);
+                    findBtn.disabled = false;
+                    if (parsed.message) {
+                        addMessage(parsed.message, false);
+                    }
+                    break;
+                    
+                case 'chat_ended':
+                    updateUI('👋 Собеседник завершил диалог', false);
+                    findBtn.disabled = false;
+                    break;
+                    
+                case 'partner_left':
+                    updateUI('👋 Собеседник вышел из чата', false);
+                    findBtn.disabled = false;
+                    break;
+                    
+                case 'new_message':
+                    if (isInChat) {
+                        addMessage(parsed.text, false);
+                    }
+                    break;
+                    
+                case 'error':
+                    statusText.textContent = '❌ ' + parsed.text;
+                    findBtn.disabled = false;
+                    break;
+                    
+                case 'waiting':
+                    statusText.textContent = '⏳ ' + parsed.text;
+                    findBtn.disabled = true;
+                    break;
+            }
+        } catch (e) {
+            console.error('Ошибка парсинга:', e);
+        }
+    });
+    
+    // Начальное состояние
+    updateUI('👋 Привет, ' + userName + '!', false);
+    tg.ready();
+</script>
+
+</body>
+</html>

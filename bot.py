@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 TOKEN = '8753350871:AAGTNJVb9pb93fMP_Oe7cjRYb2g5wqPJ4jo'
-WEBAPP_URL = 'https://nikolayslobodyanyuk-max.github.io/botmysoul/webapp/'
+WEBAPP_URL = 'https://nikolayslobodyanuk-max.github.io/botmysoul/webapp/'
 
 # Хранилище
 waiting = []
@@ -15,12 +15,15 @@ chats = {}
 
 async def start(update, context):
     keyboard = [[
-        InlineKeyboardButton("📱 Открыть приложение", web_app=WebAppInfo(url=WEBAPP_URL))
+        InlineKeyboardButton("💖 Найти свою половинку", web_app=WebAppInfo(url=WEBAPP_URL))
     ]]
     await update.message.reply_text(
-        "👋 Привет! Это бот для знакомств.\n\n"
-        "🤝 Анонимное общение без фото и личных данных.\n"
-        "Нажми кнопку, чтобы открыть приложение:",
+        "✨ Привет, искатель родственной души!\n\n"
+        "💫 Ты чувствуешь, что где-то есть человек, который поймёт тебя с полуслова?\n"
+        "🌟 Тот, с кем можно разделить радость и грусть, мечты и мысли?\n\n"
+        "🌙 Мы поможем тебе найти ЕГО или ЕЁ.\n"
+        "Нажми на кнопку ниже и открой своё сердце для встречи:\n\n"
+        "💝 Каждое знакомство — это шаг к судьбе.",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
@@ -42,7 +45,7 @@ async def webapp_data(update, context):
             if partner is None:
                 if user_id not in waiting:
                     waiting.append(user_id)
-                await context.bot.send_message(user_id, json.dumps({'action': 'waiting', 'text': 'Ищем собеседника...'}))
+                await context.bot.send_message(user_id, json.dumps({'action': 'waiting', 'text': '✨ Ищем твою родственную душу...'}))
             else:
                 chats[user_id] = partner
                 chats[partner] = user_id
@@ -54,13 +57,13 @@ async def webapp_data(update, context):
         elif action == 'stop':
             if user_id in waiting:
                 waiting.remove(user_id)
-                await context.bot.send_message(user_id, json.dumps({'action': 'chat_ended'}))
+                await context.bot.send_message(user_id, json.dumps({'action': 'chat_ended', 'text': '🌅 Поиск отменён. Возможно, судьба ждёт тебя в другой раз.'}))
             elif user_id in chats:
                 partner = chats[user_id]
                 del chats[user_id]
                 if partner in chats: del chats[partner]
-                await context.bot.send_message(user_id, json.dumps({'action': 'chat_ended'}))
-                await context.bot.send_message(partner, json.dumps({'action': 'partner_left'}))
+                await context.bot.send_message(user_id, json.dumps({'action': 'chat_ended', 'text': '💔 Разговор завершён. Но может быть, вы встретитесь снова?'}))
+                await context.bot.send_message(partner, json.dumps({'action': 'partner_left', 'text': '💫 Твой собеседник завершил диалог. Значит, это был не твой человек. Продолжай искать!'}))
                 
         elif action == 'message':
             if user_id in chats:
@@ -72,7 +75,7 @@ async def webapp_data(update, context):
                 partner = chats[user_id]
                 del chats[user_id]
                 if partner in chats: del chats[partner]
-                await context.bot.send_message(partner, json.dumps({'action': 'partner_left'}))
+                await context.bot.send_message(partner, json.dumps({'action': 'partner_left', 'text': '🌊 Твой собеседник продолжает поиск. Возможно, ваши пути пересекутся снова.'}))
             
             new_partner = None
             for w in waiting:
@@ -83,7 +86,7 @@ async def webapp_data(update, context):
             if new_partner is None:
                 if user_id not in waiting:
                     waiting.append(user_id)
-                await context.bot.send_message(user_id, json.dumps({'action': 'waiting', 'text': 'Ищем нового собеседника...'}))
+                await context.bot.send_message(user_id, json.dumps({'action': 'waiting', 'text': '✨ Ищем новую родственную душу...'}))
             else:
                 chats[user_id] = new_partner
                 chats[new_partner] = user_id
@@ -94,16 +97,17 @@ async def webapp_data(update, context):
                 
     except Exception as e:
         logger.error(f"Ошибка: {e}")
-        await context.bot.send_message(user_id, json.dumps({'action': 'error', 'text': str(e)}))
+        await context.bot.send_message(user_id, json.dumps({'action': 'error', 'text': '❌ Что-то пошло не так. Просто попробуй ещё раз.'}))
 
 def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, webapp_data))
     
-    print("✅ Бот запущен!")
+    print("💖 Бот для поиска родственной души запущен!")
     print(f"🌐 WebApp URL: {WEBAPP_URL}")
     print("📱 Откройте Telegram и найдите @Gmbls_bot")
+    print("✨ Пусть судьба найдёт тебя!")
     app.run_polling()
 
 if __name__ == '__main__':

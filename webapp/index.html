@@ -3,49 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Знакомства</title>
+    <title>💖 Поиск родственной души</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: #fff; padding: 20px; }
-        .container { max-width: 400px; margin: 0 auto; }
-        h1 { text-align: center; margin-bottom: 20px; color: #2481cc; }
-        .status { background: #f0f0f0; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: center; min-height: 50px; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; color: #fff; }
-        .btn-primary { background: #2481cc; }
-        .btn-danger { background: #ff3b30; }
-        .btn-success { background: #34c759; }
+        body { 
+            font-family: 'Georgia', 'Times New Roman', serif; 
+            background: linear-gradient(135deg, #fce4ec 0%, #f8e8e8 50%, #fce4ec 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { 
+            max-width: 400px; 
+            margin: 0 auto; 
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(233, 30, 99, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        h1 { 
+            text-align: center; 
+            font-size: 28px; 
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #e91e63, #f06292);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #ad1457;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-style: italic;
+            -webkit-text-fill-color: #ad1457;
+        }
+        .status { 
+            background: linear-gradient(135deg, #fce4ec, #f8e8e8);
+            padding: 18px; 
+            border-radius: 16px; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            min-height: 60px;
+            font-size: 16px;
+            color: #4a148c;
+            border: 1px solid rgba(233, 30, 99, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn { 
+            width: 100%; 
+            padding: 16px; 
+            border: none; 
+            border-radius: 16px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-bottom: 10px; 
+            color: #fff;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.3);
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { 
+            background: linear-gradient(135deg, #e91e63, #f06292);
+            color: #fff;
+        }
+        .btn-danger { 
+            background: linear-gradient(135deg, #d32f2f, #ef5350);
+            color: #fff;
+        }
+        .btn-success { 
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            color: #fff;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #7b1fa2, #ab47bc);
+            color: #fff;
+        }
         .hidden { display: none !important; }
         .chat-area { margin-top: 20px; }
-        .messages { background: #f5f5f5; border-radius: 12px; padding: 15px; min-height: 200px; max-height: 300px; overflow-y: auto; }
-        .msg { padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; max-width: 80%; word-wrap: break-word; }
-        .msg.incoming { background: #e9ecef; margin-right: auto; }
-        .msg.outgoing { background: #2481cc; color: #fff; margin-left: auto; }
-        .msg.system { background: transparent; text-align: center; font-style: italic; color: #888; max-width: 100%; }
-        .input-row { display: flex; gap: 10px; margin-top: 10px; }
-        .input-row input { flex: 1; padding: 12px; border: 2px solid #ccc; border-radius: 12px; font-size: 16px; }
-        .input-row input:focus { outline: none; border-color: #2481cc; }
-        .input-row .btn { width: auto; padding: 12px 20px; margin: 0; }
-        .info { text-align: center; color: #666; margin-top: 20px; font-size: 14px; }
+        .messages { 
+            background: #fafafa; 
+            border-radius: 16px; 
+            padding: 15px; 
+            min-height: 250px; 
+            max-height: 350px; 
+            overflow-y: auto;
+            border: 1px solid rgba(233, 30, 99, 0.08);
+        }
+        .msg { 
+            padding: 10px 16px; 
+            border-radius: 16px; 
+            margin-bottom: 8px; 
+            max-width: 80%; 
+            word-wrap: break-word;
+            animation: fadeIn 0.4s ease;
+        }
+        .msg.incoming { 
+            background: #fce4ec; 
+            color: #4a148c;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        .msg.outgoing { 
+            background: linear-gradient(135deg, #e91e63, #f06292);
+            color: #fff; 
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .msg.system { 
+            background: transparent; 
+            text-align: center; 
+            font-style: italic; 
+            color: #7b1fa2; 
+            max-width: 100%;
+            font-size: 13px;
+            padding: 8px;
+        }
+        .input-row { 
+            display: flex; 
+            gap: 10px; 
+            margin-top: 12px;
+        }
+        .input-row input { 
+            flex: 1; 
+            padding: 14px 16px; 
+            border: 2px solid #f8e8e8; 
+            border-radius: 16px; 
+            font-size: 15px;
+            font-family: 'Georgia', serif;
+            background: #fafafa;
+            transition: border-color 0.3s;
+        }
+        .input-row input:focus { 
+            outline: none; 
+            border-color: #e91e63;
+        }
+        .input-row .btn { 
+            width: auto; 
+            padding: 14px 24px; 
+            margin: 0; 
+        }
+        .heart-decoration {
+            text-align: center;
+            font-size: 20px;
+            color: #e91e63;
+            margin: 10px 0;
+            opacity: 0.6;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .messages::-webkit-scrollbar { width: 6px; }
+        .messages::-webkit-scrollbar-thumb { 
+            background: #f06292; 
+            border-radius: 3px;
+        }
+        .messages::-webkit-scrollbar-track { background: #fce4ec; border-radius: 3px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🤝 Знакомства</h1>
-    <div id="status" class="status">👋 Нажмите кнопку</div>
+    <h1>💖 Родственная душа</h1>
+    <div class="subtitle">✨ Тот, кто поймёт тебя без слов</div>
     
-    <button id="findBtn" class="btn btn-primary">🔍 Найти собеседника</button>
-    <button id="nextBtn" class="btn btn-success hidden">➡️ Следующий</button>
-    <button id="stopBtn" class="btn btn-danger hidden">❌ Закончить</button>
+    <div id="status" class="status">💫 Нажми кнопку, чтобы начать поиск</div>
+    
+    <button id="findBtn" class="btn btn-primary">💖 Найти свою половинку</button>
+    <button id="nextBtn" class="btn btn-secondary hidden">🌊 Продолжить поиск</button>
+    <button id="stopBtn" class="btn btn-danger hidden">💔 Завершить диалог</button>
+    
+    <div class="heart-decoration">♥ ♡ ♥ ♡ ♥</div>
     
     <div id="chatArea" class="chat-area hidden">
         <div id="messages" class="messages"></div>
         <div class="input-row">
-            <input id="msgInput" type="text" placeholder="Сообщение...">
-            <button id="sendBtn" class="btn btn-primary">📤</button>
+            <input id="msgInput" type="text" placeholder="Напиши что-то от сердца...">
+            <button id="sendBtn" class="btn btn-primary">💌</button>
         </div>
     </div>
-    <div class="info">⚡ Анонимное общение</div>
 </div>
 
 <script>
@@ -93,25 +237,25 @@ function updateUI(statusText, inChatState, waiting = false) {
         stopBtn.classList.add('hidden');
         chatArea.classList.add('hidden');
         findBtn.disabled = waiting;
-        findBtn.textContent = waiting ? '⏳ Поиск...' : '🔍 Найти собеседника';
+        findBtn.textContent = waiting ? '⏳ Поиск...' : '💖 Найти свою половинку';
     }
 }
 
 findBtn.onclick = () => {
     sendToBot('find');
-    updateUI('🔍 Ищем собеседника...', false, true);
+    updateUI('🔮 Ищем твою родственную душу...', false, true);
 };
 
 nextBtn.onclick = () => {
     sendToBot('next');
     clearChat();
-    updateUI('🔍 Ищем нового...', false, true);
+    updateUI('🌊 Продолжаем поиск...', false, true);
 };
 
 stopBtn.onclick = () => {
     sendToBot('stop');
     clearChat();
-    updateUI('👋 Диалог завершен', false);
+    updateUI('💔 Диалог завершён. Будь открыт(а) для новой встречи!', false);
 };
 
 sendBtn.onclick = () => {
@@ -134,21 +278,22 @@ tg.onEvent('message', (data) => {
         
         switch(parsed.action) {
             case 'chat_started':
-                updateUI('✅ Собеседник найден!', true);
+                updateUI('💞 Ты нашёл(а) свою родственную душу!', true);
                 clearChat();
-                addMessage('🎉 Собеседник найден! Можете общаться.', 'system');
+                addMessage('💖 Привет! Возможно, мы искали друг друга всю жизнь. Расскажи о себе.', 'system');
                 break;
             case 'chat_ended':
-                updateUI('👋 Диалог завершен', false);
+                updateUI(parsed.text || '💔 Диалог завершён', false);
                 clearChat();
+                if (parsed.text) addMessage(parsed.text, 'system');
                 break;
             case 'partner_left':
-                updateUI('👋 Собеседник вышел', false);
+                updateUI(parsed.text || '✨ Путь продолжается...', false);
                 clearChat();
-                addMessage('👋 Собеседник завершил диалог', 'system');
+                if (parsed.text) addMessage(parsed.text, 'system');
                 break;
             case 'waiting':
-                updateUI('⏳ ' + parsed.text, false, true);
+                updateUI('🔮 ' + parsed.text, false, true);
                 break;
             case 'new_message':
                 if (inChat) addMessage(parsed.text, 'incoming');
@@ -162,7 +307,7 @@ tg.onEvent('message', (data) => {
 });
 
 tg.ready();
-console.log('Mini App готов!');
+console.log('💖 Приложение для поиска родственной души готово!');
 </script>
 </body>
 </html>

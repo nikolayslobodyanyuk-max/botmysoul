@@ -3,154 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💖 Поиск родственной души</title>
+    <title>Регистрация</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Georgia', serif; background: linear-gradient(135deg, #fce4ec, #f8e8e8); min-height: 100vh; padding: 20px; }
+        body { font-family: 'Georgia', serif; background: linear-gradient(135deg, #fce4ec, #f8e8e8); padding: 20px; }
         .container { max-width: 400px; margin: 0 auto; background: rgba(255,255,255,0.9); border-radius: 24px; padding: 25px; box-shadow: 0 10px 40px rgba(233,30,99,0.15); }
-        h1 { text-align: center; font-size: 28px; background: linear-gradient(135deg, #e91e63, #f06292); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #ad1457; font-size: 14px; margin-bottom: 20px; font-style: italic; }
-        .status { background: linear-gradient(135deg, #fce4ec, #f8e8e8); padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: center; min-height: 60px; font-size: 15px; color: #4a148c; border: 1px solid rgba(233,30,99,0.1); display: flex; align-items: center; justify-content: center; }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; color: #fff; transition: all 0.3s; font-family: 'Georgia', serif; }
+        h1 { text-align: center; font-size: 24px; background: linear-gradient(135deg, #e91e63, #f06292); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+        .field { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #4a148c; }
+        select, input { width: 100%; padding: 12px; border: 2px solid #f8e8e8; border-radius: 12px; font-size: 16px; font-family: 'Georgia', serif; background: #fafafa; }
+        select:focus, input:focus { outline: none; border-color: #e91e63; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 600; cursor: pointer; color: #fff; background: linear-gradient(135deg, #e91e63, #f06292); transition: all 0.3s; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233,30,99,0.3); }
-        .btn-primary { background: linear-gradient(135deg, #e91e63, #f06292); }
-        .btn-danger { background: linear-gradient(135deg, #d32f2f, #ef5350); }
-        .btn-success { background: linear-gradient(135deg, #2e7d32, #66bb6a); }
-        .btn-secondary { background: linear-gradient(135deg, #7b1fa2, #ab47bc); }
-        .hidden { display: none !important; }
-        .chat-area { margin-top: 20px; }
-        .messages { background: #fafafa; border-radius: 16px; padding: 15px; min-height: 250px; max-height: 350px; overflow-y: auto; border: 1px solid rgba(233,30,99,0.08); }
-        .msg { padding: 10px 16px; border-radius: 16px; margin-bottom: 8px; max-width: 80%; word-wrap: break-word; animation: fadeIn 0.4s ease; }
-        .msg.incoming { background: #fce4ec; color: #4a148c; margin-right: auto; border-bottom-left-radius: 4px; }
-        .msg.outgoing { background: linear-gradient(135deg, #e91e63, #f06292); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
-        .msg.system { background: transparent; text-align: center; font-style: italic; color: #7b1fa2; max-width: 100%; font-size: 13px; padding: 8px; }
-        .input-row { display: flex; gap: 10px; margin-top: 12px; }
-        .input-row input { flex: 1; padding: 14px 16px; border: 2px solid #f8e8e8; border-radius: 16px; font-size: 15px; font-family: 'Georgia', serif; background: #fafafa; }
-        .input-row input:focus { outline: none; border-color: #e91e63; }
-        .input-row .btn { width: auto; padding: 14px 24px; margin: 0; }
-        .heart-decoration { text-align: center; font-size: 20px; color: #e91e63; margin: 10px 0; opacity: 0.6; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .messages::-webkit-scrollbar { width: 6px; }
-        .messages::-webkit-scrollbar-thumb { background: #f06292; border-radius: 3px; }
-        .messages::-webkit-scrollbar-track { background: #fce4ec; border-radius: 3px; }
-        .compatibility-badge { display: inline-block; background: linear-gradient(135deg, #e91e63, #f06292); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-top: 5px; }
+        .interests-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .interest-btn { padding: 10px; border: 2px solid #f8e8e8; border-radius: 12px; background: #fafafa; cursor: pointer; text-align: center; transition: all 0.2s; font-size: 14px; }
+        .interest-btn.selected { background: #e91e63; color: #fff; border-color: #e91e63; }
+        .subtitle { text-align: center; color: #ad1457; font-size: 14px; margin-bottom: 20px; font-style: italic; }
+        .city-input { position: relative; }
+        .city-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 2px solid #f8e8e8; border-radius: 12px; max-height: 150px; overflow-y: auto; display: none; z-index: 10; }
+        .city-suggestion { padding: 10px 12px; cursor: pointer; }
+        .city-suggestion:hover { background: #fce4ec; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>💖 Родственная душа</h1>
-    <div class="subtitle">✨ Тот, кто поймёт тебя без слов</div>
-    <div id="status" class="status">💫 Нажми кнопку, чтобы начать поиск</div>
-    <button id="findBtn" class="btn btn-primary">💖 Найти свою половинку</button>
-    <button id="nextBtn" class="btn btn-secondary hidden">🌊 Продолжить поиск</button>
-    <button id="stopBtn" class="btn btn-danger hidden">💔 Завершить диалог</button>
-    <div class="heart-decoration">♥ ♡ ♥ ♡ ♥</div>
-    <div id="chatArea" class="chat-area hidden">
-        <div id="messages" class="messages"></div>
-        <div class="input-row">
-            <input id="msgInput" type="text" placeholder="Напиши что-то от сердца...">
-            <button id="sendBtn" class="btn btn-primary">💌</button>
+    <h1>💖 Создание профиля</h1>
+    <div class="subtitle">Расскажи о себе, чтобы найти идеальную пару</div>
+    
+    <div class="field">
+        <label>⚤ Ваш пол</label>
+        <select id="gender">
+            <option value="">Выберите...</option>
+            <option value="male">Мужской</option>
+            <option value="female">Женский</option>
+            <option value="other">Другой</option>
+        </select>
+    </div>
+    
+    <div class="field">
+        <label>📅 Ваш возраст</label>
+        <input type="number" id="age" placeholder="Введите возраст" min="18" max="99">
+    </div>
+    
+    <div class="field">
+        <label>📍 Ваш город</label>
+        <div class="city-input">
+            <input type="text" id="city" placeholder="Введите город" autocomplete="off">
+            <div class="city-suggestions" id="suggestions"></div>
         </div>
     </div>
+    
+    <div class="field">
+        <label>🎯 Ваши интересы</label>
+        <div class="interests-grid" id="interests">
+            <div class="interest-btn" data-interest="Книги">📚 Книги</div>
+            <div class="interest-btn" data-interest="Фильмы">🎬 Фильмы</div>
+            <div class="interest-btn" data-interest="Музыка">🎵 Музыка</div>
+            <div class="interest-btn" data-interest="Путешествия">✈️ Путешествия</div>
+            <div class="interest-btn" data-interest="Спорт">⚽ Спорт</div>
+            <div class="interest-btn" data-interest="Искусство">🎨 Искусство</div>
+            <div class="interest-btn" data-interest="Наука">🔬 Наука</div>
+            <div class="interest-btn" data-interest="Кулинария">🍳 Кулинария</div>
+            <div class="interest-btn" data-interest="Йога">🧘 Йога</div>
+            <div class="interest-btn" data-interest="Фотография">📸 Фотография</div>
+            <div class="interest-btn" data-interest="Психология">🧠 Психология</div>
+            <div class="interest-btn" data-interest="Природа">🌿 Природа</div>
+        </div>
+    </div>
+    
+    <button class="btn" onclick="saveProfile()">💖 Сохранить и продолжить</button>
 </div>
+
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const statusEl = document.getElementById('status');
-const findBtn = document.getElementById('findBtn');
-const nextBtn = document.getElementById('nextBtn');
-const stopBtn = document.getElementById('stopBtn');
-const chatArea = document.getElementById('chatArea');
-const messages = document.getElementById('messages');
-const msgInput = document.getElementById('msgInput');
-const sendBtn = document.getElementById('sendBtn');
+const cities = [
+    "Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург", "Казань",
+    "Нижний Новгород", "Челябинск", "Самара", "Омск", "Ростов-на-Дону",
+    "Уфа", "Красноярск", "Воронеж", "Пермь", "Волгоград",
+    "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск",
+    "Барнаул", "Ульяновск", "Иркутск", "Хабаровск", "Ярославль"
+];
 
-let inChat = false;
+const interests = [];
 
-function sendToBot(action, data = {}) { tg.sendData(JSON.stringify({ action, ...data })); }
-
-function addMessage(text, type = 'incoming') {
-    const div = document.createElement('div');
-    div.className = `msg ${type}`;
-    div.textContent = text;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-}
-
-function clearChat() { messages.innerHTML = ''; }
-
-function updateUI(statusText, inChatState, waiting = false) {
-    inChat = inChatState;
-    statusEl.textContent = statusText;
-    if (inChat) {
-        findBtn.classList.add('hidden');
-        nextBtn.classList.remove('hidden');
-        stopBtn.classList.remove('hidden');
-        chatArea.classList.remove('hidden');
-        findBtn.disabled = false;
-    } else {
-        findBtn.classList.remove('hidden');
-        nextBtn.classList.add('hidden');
-        stopBtn.classList.add('hidden');
-        chatArea.classList.add('hidden');
-        findBtn.disabled = waiting;
-        findBtn.textContent = waiting ? '⏳ Поиск...' : '💖 Найти свою половинку';
-    }
-}
-
-findBtn.onclick = () => { sendToBot('find'); updateUI('🔮 Ищем твою родственную душу...', false, true); };
-nextBtn.onclick = () => { sendToBot('next'); clearChat(); updateUI('🌊 Продолжаем поиск...', false, true); };
-stopBtn.onclick = () => { sendToBot('stop'); clearChat(); updateUI('💔 Диалог завершён.', false); };
-sendBtn.onclick = () => {
-    const text = msgInput.value.trim();
-    if (text && inChat) { sendToBot('message', { text }); addMessage(text, 'outgoing'); msgInput.value = ''; }
-};
-msgInput.onkeydown = (e) => { if (e.key === 'Enter') sendBtn.click(); };
-
-tg.onEvent('message', (data) => {
-    try {
-        const parsed = JSON.parse(data);
-        console.log('Получено:', parsed);
-        switch(parsed.action) {
-            case 'chat_started':
-                updateUI('💞 Ты нашёл(а) свою родственную душу!', true);
-                clearChat();
-                addMessage('💖 ' + (parsed.message || 'Привет! Расскажи о себе.'), 'system');
-                if (parsed.compatibility) {
-                    const badge = document.createElement('div');
-                    badge.style.cssText = 'text-align:center;margin:8px 0;';
-                    badge.innerHTML = `<span class="compatibility-badge">💕 Совместимость: ${parsed.compatibility}%</span>`;
-                    messages.appendChild(badge);
-                }
-                break;
-            case 'chat_ended':
-                updateUI(parsed.text || '💔 Диалог завершён', false);
-                clearChat();
-                if (parsed.text) addMessage(parsed.text, 'system');
-                break;
-            case 'partner_left':
-                updateUI(parsed.text || '✨ Путь продолжается...', false);
-                clearChat();
-                if (parsed.text) addMessage(parsed.text, 'system');
-                break;
-            case 'waiting':
-                updateUI('🔮 ' + parsed.text, false, true);
-                break;
-            case 'new_message':
-                if (inChat) addMessage(parsed.text, 'incoming');
-                break;
-            case 'error':
-                statusEl.textContent = '❌ ' + parsed.text;
-                findBtn.disabled = false;
-                break;
+document.querySelectorAll('.interest-btn').forEach(btn => {
+    btn.onclick = () => {
+        btn.classList.toggle('selected');
+        const interest = btn.dataset.interest;
+        const index = interests.indexOf(interest);
+        if (index > -1) {
+            interests.splice(index, 1);
+        } else {
+            interests.push(interest);
         }
-    } catch(e) { console.error('Ошибка:', e); }
+    };
 });
 
+// Автодополнение города
+const cityInput = document.getElementById('city');
+const suggestions = document.getElementById('suggestions');
+
+cityInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    if (query.length < 1) {
+        suggestions.style.display = 'none';
+        return;
+    }
+    const matches = cities.filter(c => c.toLowerCase().includes(query));
+    if (matches.length > 0) {
+        suggestions.innerHTML = matches.map(c => 
+            `<div class="city-suggestion" onclick="selectCity('${c}')">${c}</div>`
+        ).join('');
+        suggestions.style.display = 'block';
+    } else {
+        suggestions.style.display = 'none';
+    }
+});
+
+function selectCity(city) {
+    cityInput.value = city;
+    suggestions.style.display = 'none';
+}
+
+document.addEventListener('click', function() {
+    suggestions.style.display = 'none';
+});
+
+function saveProfile() {
+    const gender = document.getElementById('gender').value;
+    const age = document.getElementById('age').value;
+    const city = document.getElementById('city').value;
+    
+    if (!gender || !age || !city) {
+        alert('⚠️ Пожалуйста, заполните все поля!');
+        return;
+    }
+    
+    tg.sendData(JSON.stringify({
+        action: 'register',
+        gender: gender,
+        age: age,
+        city: city,
+        interests: interests
+    }));
+    
+    alert('✅ Профиль сохранён! Теперь вернитесь в бот и нажмите "Найти свою половинку"');
+    tg.close();
+}
+
 tg.ready();
-console.log('💖 Приложение готово!');
 </script>
 </body>
 </html>
